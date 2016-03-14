@@ -1,0 +1,48 @@
+name:                checked-delete-cascade
+version:             0.1.0.0
+synopsis:            Initial project template from stack
+description:         Please see README.md
+homepage:            http://github.com/pseudonom/checked-delete-cascade#readme
+license:             MIT
+license-file:        LICENSE
+author:              Eric Easley
+maintainer:          eric101111@gmail.com
+copyright:           2016 Eric Easley
+category:            database
+build-type:          Simple
+-- extra-source-files:
+cabal-version:       >=1.10
+
+library
+  hs-source-dirs:      src
+  exposed-modules:     Lib
+  build-depends:       base >= 4.7 && < 5
+                     , persistent-template
+                     , template-haskell
+                     , persistent
+  default-language:    Haskell2010
+
+test-suite checked-delete-cascade-test
+  type:                exitcode-stdio-1.0
+  hs-source-dirs:      test
+  main-is:             Spec.hs
+  build-depends:       base
+                     , checked-delete-cascade
+                     , bytestring
+                     , persistent
+                     , resourcet
+                     , transformers
+                     , monad-logger
+                     , fast-logger
+                     , text
+                     , persistent-sqlite
+                     , hspec
+                     , persistent-template
+                     , indexedt
+                     , indexed
+  ghc-options:         -threaded -rtsopts -with-rtsopts=-N
+  default-language:    Haskell2010
+
+source-repository head
+  type:     git
+  location: https://github.com/pseudonom/checked-delete-cascade
