@@ -39,7 +39,6 @@ test-suite checked-delete-cascade-test
                      , hspec
                      , persistent-template
                      , indexedt
-                     , indexed
   ghc-options:         -threaded -rtsopts -with-rtsopts=-N
   default-language:    Haskell2010
 

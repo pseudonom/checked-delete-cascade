@@ -2,17 +2,14 @@
 # For more information, see: http://docs.haskellstack.org/en/stable/yaml_configuration/
 
 # Specifies the GHC version and set of packages available (e.g., lts-3.5, nightly-2015-09-21, ghc-7.10.2)
-resolver: lts-5.8
+resolver: lts-5.9
 
 # Local packages, usually specified by relative directory name
 packages:
 - '.'
 - location:
-    git: git@github.com:pseudonom/indexed.git
-    commit: 92480dd5992c43735de06e36d625f360ab9aa70a
-- location:
     git: git@github.com:pseudonom/indexedt
-    commit: 14525a8a2618da848e53c9a3711964ca6c238f99
+    commit: 98d0b817b9c096c579163a142073868b8a50bf2d
 # Packages to be pulled from upstream that are not in the resolver (e.g., acme-missiles-0.3)
 extra-deps: []
 
