@@ -7,16 +7,20 @@ import qualified Data.Map as Map
 import Data.Maybe
 import Data.Monoid
 import Database.Persist as P
-import Language.Haskell.TH.Syntax
+import Language.Haskell.TH
+import Language.Haskell.TH.ExpandSyns
 
 import Database.Persist.Delete.Indexed
+
+(<$$>) :: (Functor f, Functor g) => (a -> b) -> f (g a) -> f (g b)
+f <$$> a = (f <$>) <$> a
 
 type EntityType = Type
 type PreReqType = Type
 type Constructor = Con
 
-pluck :: [Dec] -> [(PreReqType, [(EntityType, Constructor)])]
-pluck = map (\i -> (entityType i, catMaybes $ fieldKeyConstructors <$> entityFieldConstructors i))
+pluck :: Dec -> Q (PreReqType, [(EntityType, Constructor)])
+pluck dec = (entityType dec, ) . catMaybes <$> mapM fieldKeyConstructors (entityFieldConstructors dec)
 
 filterFKs :: [(PreReqType, [(EntityType, Constructor)])] -> [(PreReqType, [(EntityType, Constructor)])]
 filterFKs =
@@ -62,13 +66,13 @@ entityFieldConstructors :: Dec -> [Constructor]
 entityFieldConstructors (DataInstD _ _ _ cons _) = cons
 entityFieldConstructors _ = error "`EntityField` not returning `DataInstD`"
 
-fieldKeyConstructors :: Constructor -> Maybe (Type, Constructor)
-fieldKeyConstructors (ForallC [] [AppT _ (AppT (ConT k) ty)] con)
-  | k == ''P.Key = Just (ty, con)
-  | otherwise = Nothing
-fieldKeyConstructors (ForallC [] [AppT _ (ConT ty)] con) =
-  (, con) . ConT . mkName <$> "Id" `stripSuffix` show ty
-fieldKeyConstructors _ = Nothing
-
-stripSuffix :: Eq a => [a] -> [a] -> Maybe [a]
-stripSuffix xs ys = reverse <$> List.stripPrefix (reverse xs) (reverse ys)
+fieldKeyConstructors :: Constructor -> Q (Maybe (EntityType, Constructor))
+fieldKeyConstructors con =
+  case con of
+    (ForallC [] [AppT _equalityT ty] con') ->
+      ((, con') <$$>) . traverse expandSyns . extractEntityType =<< expandSyns ty
+    _ -> pure Nothing
+  where
+    extractEntityType (AppT (ConT k) ty)
+      | k == ''P.Key = Just ty
+    extractEntityType _ = Nothing

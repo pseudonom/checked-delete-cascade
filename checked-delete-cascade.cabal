@@ -25,6 +25,7 @@ library
                      , persistent-template
                      , template-haskell
                      , text
+                     , th-expand-syns
                      , transformers
   default-language:    Haskell2010
   default-extensions:  DataKinds

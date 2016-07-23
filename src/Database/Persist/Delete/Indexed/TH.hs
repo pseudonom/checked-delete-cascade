@@ -7,4 +7,4 @@ import Database.Persist.Delete.Indexed.TH.Internal
 
 mkInstances :: Name -> Q [Dec]
 mkInstances backendName =
-  fmap concat . mapM (uncurry (mkInstance backendName)) . Map.toList . invert . filterFKs . pluck =<< entityFieldInstances
+  fmap concat . mapM (uncurry (mkInstance backendName)) . Map.toList . invert . filterFKs =<< mapM pluck =<< entityFieldInstances
